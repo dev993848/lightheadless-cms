@@ -23,6 +23,9 @@ vendor/
 .vscode/
 *.iml
 
+# Claude IDE
+.claude/
+
 # OS
 .DS_Store
 Thumbs.db
