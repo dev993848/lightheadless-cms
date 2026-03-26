@@ -49,3 +49,7 @@ temp/
 # Coverage
 coverage.out
 coverage.html
+
+# Project documentation (internal)
+docs/
+project/
