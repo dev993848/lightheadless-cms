@@ -1,0 +1,176 @@
+{{template "base" .}}
+
+{{define "content"}}
+<!-- Stats grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+
+    <!-- Total leads -->
+    <div class="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+                <svg class="w-5 h-5 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/>
+                </svg>
+            </div>
+            <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Всего</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{.TotalLeads}}</p>
+        <p class="text-sm text-slate-500 mt-1">Заявок получено</p>
+    </div>
+
+    <!-- New leads today -->
+    <div class="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+            </div>
+            {{if gt .NewLeadsToday 0}}
+            <span class="text-xs font-medium text-amber-700 bg-amber-100 px-2 py-1 rounded-lg">Сегодня</span>
+            {{else}}
+            <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Сегодня</span>
+            {{end}}
+        </div>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{.NewLeadsToday}}</p>
+        <p class="text-sm text-slate-500 mt-1">Новых заявок</p>
+    </div>
+
+    <!-- News count -->
+    <div class="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"/>
+                </svg>
+            </div>
+            <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Всего</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{.TotalNews}}</p>
+        <p class="text-sm text-slate-500 mt-1">Новостей опубликовано</p>
+    </div>
+
+    <!-- Bitrix24 status -->
+    <div class="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl {{if .Bitrix24Enabled}}bg-emerald-50{{else}}bg-slate-100{{end}} flex items-center justify-center">
+                <svg class="w-5 h-5 {{if .Bitrix24Enabled}}text-emerald-600{{else}}text-slate-400{{end}}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"/>
+                </svg>
+            </div>
+            {{if .Bitrix24Enabled}}
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-100 px-2 py-1 rounded-lg">
+                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>Активен
+            </span>
+            {{else}}
+            <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Выключен</span>
+            {{end}}
+        </div>
+        <p class="text-sm font-semibold text-slate-900">Битрикс24</p>
+        <p class="text-sm text-slate-500 mt-1">{{if .Bitrix24Enabled}}Интеграция работает{{else}}Настройте интеграцию{{end}}</p>
+    </div>
+</div>
+
+<!-- Recent leads + Quick actions -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+    <!-- Recent leads table -->
+    <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <div>
+                <h2 class="text-sm font-semibold text-slate-900">Последние заявки</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Актуально на сейчас</p>
+            </div>
+            <a href="/admin/leads" class="inline-flex items-center gap-1.5 text-xs font-medium text-brand-600 hover:text-brand-700 transition-colors">
+                Все заявки
+                <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                </svg>
+            </a>
+        </div>
+
+        {{if .RecentLeads}}
+        <div class="divide-y divide-slate-50">
+            {{range .RecentLeads}}
+            <a href="/admin/leads/{{.ID}}" class="flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50/70 transition-colors group">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shrink-0 text-white text-sm font-semibold shadow-sm">
+                    {{slice .Name 0 1}}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-slate-900 truncate group-hover:text-brand-600 transition-colors">{{.Name}}</p>
+                    <p class="text-xs text-slate-500 truncate">{{.Phone}}{{if .Email}} · {{.Email}}{{end}}</p>
+                </div>
+                <div class="flex flex-col items-end gap-1 shrink-0">
+                    {{if eq .Status "new"}}<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Новая</span>
+                    {{else if eq .Status "sent"}}<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Отправлена</span>
+                    {{else if eq .Status "error"}}<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>Ошибка</span>{{end}}
+                    <span class="text-xs text-slate-400">{{.CreatedAt | formatDate}}</span>
+                </div>
+            </a>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="flex flex-col items-center justify-center py-16 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-3">
+                <svg class="w-6 h-6 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/>
+                </svg>
+            </div>
+            <p class="text-sm font-medium text-slate-600">Заявок пока нет</p>
+            <p class="text-xs text-slate-400 mt-1">Новые заявки появятся здесь</p>
+        </div>
+        {{end}}
+    </div>
+
+    <!-- Quick actions -->
+    <div class="flex flex-col gap-5">
+
+        <!-- Quick actions card -->
+        <div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-5">
+            <h2 class="text-sm font-semibold text-slate-900 mb-4">Быстрые действия</h2>
+            <div class="space-y-2">
+                <a href="/admin/news/new"
+                   class="flex items-center gap-3 w-full px-4 py-3 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02] shadow-sm shadow-brand-600/20">
+                    <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                    </svg>
+                    Создать новость
+                </a>
+                <a href="/admin/leads?status=new"
+                   class="flex items-center gap-3 w-full px-4 py-3 bg-amber-50 hover:bg-amber-100 text-amber-800 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02]">
+                    <svg class="w-4 h-4 shrink-0 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                    </svg>
+                    Новые заявки ({{.NewLeadsCount}})
+                </a>
+                <a href="/admin/leads/export.csv"
+                   class="flex items-center gap-3 w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02]">
+                    <svg class="w-4 h-4 shrink-0 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                    </svg>
+                    Экспорт заявок CSV
+                </a>
+                <a href="/admin/settings"
+                   class="flex items-center gap-3 w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02]">
+                    <svg class="w-4 h-4 shrink-0 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.28c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                    </svg>
+                    Настройки
+                </a>
+            </div>
+        </div>
+
+        <!-- API endpoint hint -->
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5">
+            <h3 class="text-sm font-semibold text-white mb-2">API эндпоинт</h3>
+            <p class="text-xs text-slate-400 mb-3">Для приёма заявок с формы на вашем сайте:</p>
+            <div class="bg-slate-800 rounded-xl px-3 py-2.5 font-mono text-xs text-emerald-400 break-all select-all">
+                POST /api/leads
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Поля: name, phone, email, comment</p>
+        </div>
+    </div>
+</div>
+
+{{end}}

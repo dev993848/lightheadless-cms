@@ -4,7 +4,6 @@
 *.dll
 *.so
 *.dylib
-cms
 cms.exe
 
 # Test binary
@@ -35,8 +34,8 @@ Thumbs.db
 *.db-shm
 
 # Uploads (runtime data)
-cms/uploads/*
-!cms/uploads/.gitkeep
+uploads/*
+!uploads/.gitkeep
 
 # Logs
 *.log

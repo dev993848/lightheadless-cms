@@ -1,0 +1,54 @@
+{{define "pagination"}}
+{{if gt .Pages 1}}
+<div class="flex items-center justify-between mt-6">
+    <p class="text-sm text-slate-500">
+        Показано <span class="font-medium text-slate-700">{{.From}}</span>–<span class="font-medium text-slate-700">{{.To}}</span>
+        из <span class="font-medium text-slate-700">{{.Total}}</span>
+    </p>
+    <nav class="flex items-center gap-1">
+        {{if gt .Page 1}}
+        <a href="?{{.QueryWithPage (dec .Page)}}"
+           class="inline-flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-all duration-200 text-sm font-medium">
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+            </svg>
+        </a>
+        {{else}}
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl text-slate-300 text-sm cursor-not-allowed">
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+            </svg>
+        </span>
+        {{end}}
+
+        {{range .PageNumbers}}
+        {{if eq . -1}}
+        <span class="inline-flex items-center justify-center w-9 h-9 text-slate-400 text-sm">…</span>
+        {{else if eq . $.Page}}
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-brand-600 text-white text-sm font-semibold shadow-sm shadow-brand-600/25">{{.}}</span>
+        {{else}}
+        <a href="?{{$.QueryWithPage .}}"
+           class="inline-flex items-center justify-center w-9 h-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 text-sm font-medium">
+            {{.}}
+        </a>
+        {{end}}
+        {{end}}
+
+        {{if lt .Page .Pages}}
+        <a href="?{{.QueryWithPage (inc .Page)}}"
+           class="inline-flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-all duration-200 text-sm font-medium">
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+            </svg>
+        </a>
+        {{else}}
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl text-slate-300 text-sm cursor-not-allowed">
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+            </svg>
+        </span>
+        {{end}}
+    </nav>
+</div>
+{{end}}
+{{end}}

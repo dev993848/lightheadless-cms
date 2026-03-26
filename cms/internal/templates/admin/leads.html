@@ -1,0 +1,199 @@
+{{template "base" .}}
+
+{{define "content"}}
+<!-- Header row -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div>
+        <h2 class="text-lg font-semibold text-slate-900">Все заявки</h2>
+        <p class="text-sm text-slate-500 mt-0.5">{{.Pagination.Total}} заявок в базе</p>
+    </div>
+    <div class="flex items-center gap-2">
+        <a href="/admin/leads/export.csv{{if .Filter.QueryString}}?{{.Filter.QueryString}}{{end}}"
+           class="inline-flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl shadow-sm transition-all duration-200 hover:border-slate-300">
+            <svg class="w-4 h-4 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+            </svg>
+            Экспорт CSV
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-4 mb-5">
+    <form id="leads-filter"
+          hx-get="/admin/leads"
+          hx-target="#leads-table-wrap"
+          hx-trigger="change, input delay:400ms from:#leads-search"
+          hx-push-url="true"
+          class="flex flex-col sm:flex-row gap-3">
+
+        <!-- Search -->
+        <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                </svg>
+            </div>
+            <input
+                id="leads-search"
+                type="text"
+                name="search"
+                value="{{.Filter.Search}}"
+                placeholder="Поиск по имени, телефону, email..."
+                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400
+                       focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400 focus:bg-white transition-all duration-200">
+        </div>
+
+        <!-- Status filter -->
+        <div class="relative">
+            <select name="status"
+                class="appearance-none pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700
+                       focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400 focus:bg-white transition-all duration-200 cursor-pointer">
+                <option value="" {{if eq .Filter.Status ""}}selected{{end}}>Все статусы</option>
+                <option value="new" {{if eq .Filter.Status "new"}}selected{{end}}>Новые</option>
+                <option value="sent" {{if eq .Filter.Status "sent"}}selected{{end}}>Отправлены</option>
+                <option value="error" {{if eq .Filter.Status "error"}}selected{{end}}>Ошибка</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Per page -->
+        <div class="relative">
+            <select name="limit"
+                class="appearance-none pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700
+                       focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400 focus:bg-white transition-all duration-200 cursor-pointer">
+                <option value="20" {{if eq .Filter.Limit 20}}selected{{end}}>20 на странице</option>
+                <option value="50" {{if eq .Filter.Limit 50}}selected{{end}}>50 на странице</option>
+                <option value="100" {{if eq .Filter.Limit 100}}selected{{end}}>100 на странице</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
+                </svg>
+            </div>
+        </div>
+
+        {{if .Filter.HasFilters}}
+        <a href="/admin/leads"
+           class="inline-flex items-center gap-2 px-3.5 py-2.5 text-slate-500 hover:text-slate-700 text-sm font-medium transition-colors">
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+            </svg>
+            Сбросить
+        </a>
+        {{end}}
+    </form>
+</div>
+
+<!-- Table -->
+<div id="leads-table-wrap">
+    {{template "leads_table" .}}
+</div>
+{{end}}
+
+{{define "leads_table"}}
+<div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+    {{if .Leads}}
+    <!-- Desktop table -->
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-slate-100 bg-slate-50/50">
+                    <th class="text-left px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">#</th>
+                    <th class="text-left px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">Клиент</th>
+                    <th class="text-left px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap hidden md:table-cell">Телефон</th>
+                    <th class="text-left px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap hidden lg:table-cell">Email</th>
+                    <th class="text-left px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">Статус</th>
+                    <th class="text-left px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap hidden sm:table-cell">Дата</th>
+                    <th class="px-6 py-3.5"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50" x-data>
+                {{range .Leads}}
+                <tr id="lead-row-{{.ID}}" class="hover:bg-slate-50/70 transition-colors group">
+                    <td class="px-6 py-4 text-slate-400 font-mono text-xs">{{.ID}}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shrink-0 text-white text-xs font-bold shadow-sm">
+                                {{slice .Name 0 1}}
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-900">{{.Name}}</p>
+                                {{if .Comment}}<p class="text-xs text-slate-400 truncate max-w-[160px]">{{.Comment}}</p>{{end}}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-slate-600 hidden md:table-cell whitespace-nowrap">{{.Phone}}</td>
+                    <td class="px-6 py-4 text-slate-500 hidden lg:table-cell">
+                        {{if .Email}}<span class="truncate block max-w-[180px]">{{.Email}}</span>{{else}}<span class="text-slate-300">—</span>{{end}}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{if eq .Status "new"}}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Новая
+                        </span>
+                        {{else if eq .Status "sent"}}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Отправлена
+                        </span>
+                        {{else if eq .Status "error"}}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>Ошибка
+                        </span>
+                        {{end}}
+                    </td>
+                    <td class="px-6 py-4 text-slate-400 text-xs hidden sm:table-cell whitespace-nowrap">{{.CreatedAt | formatDate}}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <a href="/admin/leads/{{.ID}}"
+                               class="p-2 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all duration-200"
+                               title="Просмотреть">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                </svg>
+                            </a>
+                            <button
+                                hx-delete="/admin/leads/{{.ID}}"
+                                hx-target="#lead-row-{{.ID}}"
+                                hx-swap="outerHTML swap:300ms"
+                                hx-confirm="Удалить заявку от {{.Name}}? Это действие нельзя отменить."
+                                hx-headers='{"X-CSRF-Token": "{{$.CSRFToken}}"}'
+                                class="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+                                title="Удалить">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="px-6 py-4 border-t border-slate-100">
+        {{template "pagination" .Pagination}}
+    </div>
+
+    {{else}}
+    <!-- Empty state -->
+    <div class="flex flex-col items-center justify-center py-20">
+        <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+            <svg class="w-8 h-8 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+            </svg>
+        </div>
+        <p class="text-base font-semibold text-slate-700">Заявок не найдено</p>
+        <p class="text-sm text-slate-400 mt-1">Попробуйте изменить параметры фильтра</p>
+        <a href="/admin/leads" class="mt-4 text-sm text-brand-600 hover:text-brand-700 font-medium transition-colors">Сбросить фильтры</a>
+    </div>
+    {{end}}
+</div>
+{{end}}

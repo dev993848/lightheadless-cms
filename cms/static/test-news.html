@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест новостей</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .news-item { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .news-item img { max-width: 100%; height: auto; border-radius: 4px; }
+        .error { color: red; }
+        .loading { color: #666; }
+    </style>
+</head>
+<body>
+    <h1>Тест новостей CMS</h1>
+    
+    <div id="status" class="loading">Загрузка...</div>
+    <div id="news-container"></div>
+    
+    <script>
+        const CMS_URL = 'http://localhost:8080';
+        
+        async function loadNews() {
+            const status = document.getElementById('status');
+            const container = document.getElementById('news-container');
+            
+            try {
+                console.log('Fetching from:', CMS_URL + '/api/news');
+                const response = await fetch(CMS_URL + '/api/news');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status);
+                }
+                
+                const data = await response.json();
+                console.log('Full response:', data);
+                
+                if (!data.data || data.data.length === 0) {
+                    status.textContent = 'Новостей нет';
+                    return;
+                }
+                
+                status.textContent = `Найдено новостей: ${data.data.length}`;
+                
+                container.innerHTML = data.data.map(news => {
+                    console.log('Processing news:', news);
+                    return `
+                        <div class="news-item">
+                            <h3>ID: ${news.ID}</h3>
+                            <p><strong>Title:</strong> ${news.Title || 'NO TITLE'}</p>
+                            <p><strong>Date:</strong> ${news.Date || 'NO DATE'}</p>
+                            <p><strong>Announce:</strong> ${news.Announce || '(empty)'}</p>
+                            ${news.Image ? `<img src="${CMS_URL}${news.Image}" alt="News image">` : '<p>No image</p>'}
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Error loading news:', error);
+                status.className = 'error';
+                status.textContent = 'Ошибка: ' + error.message;
+            }
+        }
+        
+        loadNews();
+    </script>
+</body>
+</html>

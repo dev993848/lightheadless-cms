@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестовый Лендинг</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-slate-800">🚀 Мой Лендинг</h1>
+            <nav class="flex gap-6">
+                <a href="#about" class="text-slate-600 hover:text-slate-900 transition-colors">О нас</a>
+                <a href="#news" class="text-slate-600 hover:text-slate-900 transition-colors">Новости</a>
+                <a href="#contact" class="text-slate-600 hover:text-slate-900 transition-colors">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-brand-600 to-indigo-700 text-white py-20">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 fade-in">Добро пожаловать!</h2>
+            <p class="text-xl md:text-2xl mb-8 opacity-90 fade-in" style="animation-delay: 0.2s;">
+                Мы создаём лучшие решения для вашего бизнеса
+            </p>
+            <a href="#contact" class="inline-block bg-white text-brand-600 px-8 py-3 rounded-full font-semibold hover:bg-slate-100 transition-all hover:scale-105 shadow-lg">
+                Оставить заявку
+            </a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-slate-800 mb-12">О нашей компании</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-4xl mb-4">🎯</div>
+                    <h3 class="text-xl font-semibold mb-3">Качество</h3>
+                    <p class="text-slate-600">Мы гарантируем высокое качество всех наших услуг и продуктов.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-4xl mb-4">⚡</div>
+                    <h3 class="text-xl font-semibold mb-3">Скорость</h3>
+                    <p class="text-slate-600">Быстрое выполнение заказов без потери качества.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-4xl mb-4">💼</div>
+                    <h3 class="text-xl font-semibold mb-3">Опыт</h3>
+                    <p class="text-slate-600">Более 10 лет успешной работы на рынке.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section -->
+    <section id="news" class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Последние новости</h2>
+            <p class="text-center text-slate-500 mb-12">Будьте в курсе всех событий</p>
+            
+            <div id="news-loading" class="text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600"></div>
+                <p class="text-slate-500 mt-4">Загрузка новостей...</p>
+            </div>
+            
+            <div id="news-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                <!-- Новости будут загружены через JS -->
+            </div>
+            
+            <div id="news-empty" class="text-center py-12 hidden">
+                <div class="text-6xl mb-4">📰</div>
+                <p class="text-slate-500">Новостей пока нет</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="contact" class="py-16">
+        <div class="max-w-2xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Свяжитесь с нами</h2>
+            <p class="text-center text-slate-500 mb-12">Заполните форму и мы перезвоним вам в течение 15 минут</p>
+            
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <form id="lead-form" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-slate-700 mb-2">
+                            Ваше имя *
+                        </label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            required
+                            placeholder="Иван Иванов"
+                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-slate-700 mb-2">
+                            Телефон *
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            required
+                            placeholder="+7 (999) 123-45-67"
+                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-slate-700 mb-2">
+                            Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="example@mail.ru"
+                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="comment" class="block text-sm font-medium text-slate-700 mb-2">
+                            Комментарий
+                        </label>
+                        <textarea 
+                            id="comment" 
+                            name="comment" 
+                            rows="4"
+                            placeholder="Расскажите подробнее о вашем вопросе..."
+                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none resize-none"
+                        ></textarea>
+                    </div>
+                    
+                    <button 
+                        type="submit" 
+                        id="submit-btn"
+                        class="w-full bg-gradient-to-r from-brand-600 to-indigo-600 text-white py-4 rounded-xl font-semibold hover:from-brand-700 hover:to-indigo-700 transition-all hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    >
+                        Отправить заявку
+                    </button>
+                    
+                    <p class="text-xs text-slate-400 text-center">
+                        Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных
+                    </p>
+                </form>
+                
+                <!-- Success Message -->
+                <div id="success-message" class="hidden text-center py-8">
+                    <div class="text-6xl mb-4">✅</div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">Заявка отправлена!</h3>
+                    <p class="text-slate-600 mb-6">Мы свяжемся с вами в ближайшее время</p>
+                    <button 
+                        onclick="resetForm()" 
+                        class="text-brand-600 hover:text-brand-700 font-medium"
+                    >
+                        Отправить ещё одну заявку
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-white py-8">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-slate-400">© 2026 Мой Лендинг. Все права защищены.</p>
+            <p class="text-slate-500 text-sm mt-2">Создано с помощью LightHeadless CMS</p>
+        </div>
+    </footer>
+
+    <script>
+        // CMS API URL
+        const CMS_URL = 'http://localhost:8080';
+        
+        // Load News
+        async function loadNews() {
+            try {
+                const response = await fetch(`${CMS_URL}/api/news?limit=6`);
+                const data = await response.json();
+                
+                document.getElementById('news-loading').classList.add('hidden');
+                
+                if (data.data && data.data.length > 0) {
+                    const container = document.getElementById('news-container');
+                    container.innerHTML = data.data.map(news => `
+                        <article class="bg-slate-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
+                            ${news.image ? `
+                                <img src="${CMS_URL}${news.image}" alt="${news.title}" class="w-full h-48 object-cover">
+                            ` : `
+                                <div class="w-full h-48 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                                    <span class="text-6xl">📰</span>
+                                </div>
+                            `}
+                            <div class="p-6">
+                                <div class="text-sm text-slate-500 mb-2">
+                                    📅 ${formatDate(news.date)}
+                                </div>
+                                <h3 class="text-xl font-bold text-slate-800 mb-3 line-clamp-2">${news.title}</h3>
+                                ${news.announce ? `
+                                    <p class="text-slate-600 line-clamp-3">${news.announce}</p>
+                                ` : ''}
+                            </div>
+                        </article>
+                    `).join('');
+                    container.classList.remove('hidden');
+                } else {
+                    document.getElementById('news-empty').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading news:', error);
+                document.getElementById('news-loading').innerHTML = `
+                    <div class="text-red-500">
+                        <p>❌ Ошибка загрузки новостей</p>
+                        <p class="text-sm mt-2">Убедитесь, что CMS запущен на порту 8080</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        
+        // Handle form submit
+        document.getElementById('lead-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+            
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                comment: document.getElementById('comment').value.trim()
+            };
+            
+            try {
+                const response = await fetch(`${CMS_URL}/api/leads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Success
+                    document.getElementById('lead-form').classList.add('hidden');
+                    document.getElementById('success-message').classList.remove('hidden');
+                } else {
+                    // Error
+                    alert('Ошибка: ' + (result.message || 'Не удалось отправить заявку'));
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ошибка сети. Проверьте подключение к интернету.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+        
+        // Reset form
+        function resetForm() {
+            document.getElementById('lead-form').reset();
+            document.getElementById('lead-form').classList.remove('hidden');
+            document.getElementById('success-message').classList.add('hidden');
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('submit-btn').textContent = 'Отправить заявку';
+        }
+        
+        // Load news on page load
+        document.addEventListener('DOMContentLoaded', loadNews);
+    </script>
+    
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</body>
+</html>
