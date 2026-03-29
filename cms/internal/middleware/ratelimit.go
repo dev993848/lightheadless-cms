@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -15,20 +16,40 @@ const (
 )
 
 // bucket holds the request count and the start of the current window for one IP.
+// mu protects only windowStart resets (rare); count is incremented atomically.
 type bucket struct {
-	mu        sync.Mutex
-	count     int
+	mu          sync.Mutex
 	windowStart time.Time
+	count       atomic.Int64
 }
 
 // RateLimiter implements IP-based rate limiting.
 type RateLimiter struct {
-	buckets sync.Map // map[string]*bucket
+	mu      sync.RWMutex
+	buckets map[string]*bucket
 }
 
 // NewRateLimiter creates a new RateLimiter.
 func NewRateLimiter() *RateLimiter {
-	return &RateLimiter{}
+	return &RateLimiter{buckets: make(map[string]*bucket)}
+}
+
+func (rl *RateLimiter) getOrCreate(ip string) *bucket {
+	rl.mu.RLock()
+	b, ok := rl.buckets[ip]
+	rl.mu.RUnlock()
+	if ok {
+		return b
+	}
+
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+	if b, ok = rl.buckets[ip]; ok {
+		return b
+	}
+	b = &bucket{windowStart: time.Now()}
+	rl.buckets[ip] = b
+	return b
 }
 
 // Cleanup removes stale IP buckets every 5 minutes until ctx is cancelled.
@@ -41,16 +62,16 @@ func (rl *RateLimiter) Cleanup(ctx context.Context) {
 			return
 		case <-ticker.C:
 			now := time.Now()
-			rl.buckets.Range(func(key, value any) bool {
-				b := value.(*bucket)
+			rl.mu.Lock()
+			for ip, b := range rl.buckets {
 				b.mu.Lock()
 				expired := now.Sub(b.windowStart) > rateLimitWindow
 				b.mu.Unlock()
 				if expired {
-					rl.buckets.Delete(key)
+					delete(rl.buckets, ip)
 				}
-				return true
-			})
+			}
+			rl.mu.Unlock()
 		}
 	}
 }
@@ -59,21 +80,19 @@ func (rl *RateLimiter) Cleanup(ctx context.Context) {
 func (rl *RateLimiter) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ip := realIP(r)
+		b := rl.getOrCreate(ip)
 
-		val, _ := rl.buckets.LoadOrStore(ip, &bucket{windowStart: time.Now()})
-		b := val.(*bucket)
-
-		b.mu.Lock()
+		// Reset window if expired; mutex guards only this compound check-and-reset.
 		now := time.Now()
+		b.mu.Lock()
 		if now.Sub(b.windowStart) > rateLimitWindow {
-			b.count = 0
 			b.windowStart = now
+			b.count.Store(0)
 		}
-		b.count++
-		count := b.count
 		b.mu.Unlock()
 
-		if count > rateLimitRequests {
+		// Atomic increment — no mutex needed for the hot path.
+		if b.count.Add(1) > rateLimitRequests {
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Retry-After", "60")
 			w.WriteHeader(http.StatusTooManyRequests)
